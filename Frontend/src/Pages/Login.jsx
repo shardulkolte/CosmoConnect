@@ -141,22 +141,35 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async () => {
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", formData);
+//*****************Old handleLogin*****************  
+  // const handleLogin = async () => {
+  //   try {
+  //     const res = await axios.post("http://localhost:5000/api/auth/login", formData);
 
-      if (res.data?.message) {
-        alert(res.data.message);
-        navigate("/dashboard");
-      } else {
-        alert("Login successful");
-        navigate("/dashboard");
-      }
-    } catch (err) {
-      const message = err.response?.data?.message || "Login failed";
-      alert(message);
-    }
-  };
+  //     if (res.data?.message) {
+  //       alert(res.data.message);
+  //       navigate("/dashboard");
+  //     } else {
+  //       alert("Login successful");
+  //       navigate("/dashboard");
+  //     }
+  //   } catch (err) {
+  //     const message = err.response?.data?.message || "Login failed";
+  //     alert(message);
+  //   }
+  // };
+
+//******************New handleLogin*****************/
+const handleLogin = async () => {
+  try {
+    const res = await axios.post("http://localhost:5000/api/auth/login", formData);
+    localStorage.setItem("token", res.data.token);
+    alert(res.data.message);
+    navigate("/dashboard");
+  } catch (err) {
+    alert(err?.response?.data?.message || "Login failed");
+  }
+};
 
   return (
     <Box

@@ -19,6 +19,8 @@ import {
   AddBoxOutlined,
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
+import { Logout } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const sidebarItems = [
   { icon: <Home />, text: "Home", path: "/dashboard" },
@@ -61,6 +63,13 @@ const Sidebar = () => {
     setOpenMenus((prev) => ({ ...prev, [text]: !prev[text] }));
   };
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   return (
     <Drawer
       variant="permanent"
@@ -77,7 +86,7 @@ const Sidebar = () => {
     >
       <Toolbar>
         <Typography
-          variant="h4" 
+          variant="h4"
           sx={{
             fontFamily: "cursive",
             fontWeight: "bold",
@@ -162,6 +171,27 @@ const Sidebar = () => {
             )}
           </React.Fragment>
         ))}
+        {/* Logout Button */}
+        <ListItem
+          button
+          onClick={handleLogout}
+          sx={{
+            backgroundColor: "transparent",
+            "&:hover": { backgroundColor: "#ff5555" },
+          }}
+        >
+          <ListItemIcon sx={{ color: "#fff" }}>
+            <Logout />
+          </ListItemIcon>
+          <ListItemText
+            primary="Logout"
+            primaryTypographyProps={{
+              fontSize: "1.2rem",
+              fontWeight: "bold",
+              color: "#fff",
+            }}
+          />
+        </ListItem>
       </List>
     </Drawer>
   );

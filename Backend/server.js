@@ -15,11 +15,17 @@ connectDB();
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 
-// // Protect Route Example test
-// const authenticateToken = require("./middleware/authMiddleware");
-// app.get("/api/protected", authenticateToken, (req, res) => {
-//   res.json({ message: "Welcome to protected route!", user: req.user });
-// });
+// Protect Route Example test
+const authenticateToken = require("./middleware/authMiddleware");
+app.get("/api/protected", authenticateToken, (req, res) => {
+  res.json({ message: "Welcome to protected route!", user: req.user });
+});
+
+//catching error
+app.use((err, req, res, next) => {
+    console.error("Unexpected Error:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
+  });
 
 // Start server
 const PORT = process.env.PORT || 5000;
