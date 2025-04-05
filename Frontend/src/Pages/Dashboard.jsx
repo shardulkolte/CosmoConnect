@@ -17,21 +17,40 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  // const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const params = new URLSearchParams(window.location.search);
+  //   const token = params.get("token");
+
+  //   if (token) {
+  //     localStorage.setItem("token", token);
+  //     // Clear the token from URL
+  //     window.history.replaceState({}, document.title, "/dashboard");
+  //   } else {
+  //     // Optional: redirect if no token
+  //     navigate("/");
+  //   }
+  // }, []);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const tokenFromURL = params.get("token");
+    const tokenInStorage = localStorage.getItem("token");
 
-    if (token) {
-      localStorage.setItem("token", token);
-      // Clear the token from URL
+    if (tokenFromURL) {
+      localStorage.setItem("token", tokenFromURL);
       window.history.replaceState({}, document.title, "/dashboard");
-    } else {
-      // Optional: redirect if no token
-      navigate("/login");
+      navigate("/dashboard"); // ✅ Navigate after token is set
+    } else if (!tokenInStorage) {
+      navigate("/"); // ✅ Redirect to login if token is missing
     }
-  }, []);
+
+    // ✅ If token exists in storage and URL is clean, do nothing
+  }, [navigate]);
+
 
   return (
     <Box

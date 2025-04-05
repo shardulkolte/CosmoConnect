@@ -17,10 +17,9 @@ import {
   ExpandLess,
   ExpandMore,
   AddBoxOutlined,
+  Logout,
 } from "@mui/icons-material";
-import { Link, useLocation } from "react-router-dom";
-import { Logout } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const sidebarItems = [
   { icon: <Home />, text: "Home", path: "/dashboard" },
@@ -58,12 +57,11 @@ const sidebarItems = [
 const Sidebar = () => {
   const location = useLocation();
   const [openMenus, setOpenMenus] = React.useState({});
+  const navigate = useNavigate();
 
   const handleToggle = (text) => {
     setOpenMenus((prev) => ({ ...prev, [text]: !prev[text] }));
   };
-
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -114,30 +112,53 @@ const Sidebar = () => {
           <React.Fragment key={index}>
             <ListItem
               button
-              onClick={() => item.subItems && handleToggle(item.text)}
-              component={item.path ? Link : "div"}
-              to={item.path || "#"}
+              onClick={() => {
+                if (item.subItems) handleToggle(item.text);
+              }}
               sx={{
                 backgroundColor:
                   location.pathname === item.path ? "#1f6feb" : "transparent",
                 "&:hover": { backgroundColor: "#1f6feb" },
               }}
             >
-              <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                primaryTypographyProps={{
-                  fontSize: "1.2rem",
-                  fontWeight: "bold",
-                  color: "#fff", // Make text color white
-                }}
-              />
-              {item.subItems &&
-                (openMenus[item.text] ? (
-                  <ExpandLess sx={{ color: "#fff" }} />
-                ) : (
-                  <ExpandMore sx={{ color: "#fff" }} />
-                ))}
+              {item.path ? (
+                <Link
+                  to={item.path}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    textDecoration: "none",
+                    color: "#fff",
+                  }}
+                >
+                  <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    primaryTypographyProps={{
+                      fontSize: "1.2rem",
+                      fontWeight: "bold",
+                    }}
+                  />
+                </Link>
+              ) : (
+                <>
+                  <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    primaryTypographyProps={{
+                      fontSize: "1.2rem",
+                      fontWeight: "bold",
+                    }}
+                  />
+                  {item.subItems &&
+                    (openMenus[item.text] ? (
+                      <ExpandLess sx={{ color: "#fff" }} />
+                    ) : (
+                      <ExpandMore sx={{ color: "#fff" }} />
+                    ))}
+                </>
+              )}
             </ListItem>
 
             {item.subItems && (
@@ -147,8 +168,6 @@ const Sidebar = () => {
                     <ListItem
                       button
                       key={subIndex}
-                      component={Link}
-                      to={subItem.path}
                       sx={{
                         backgroundColor:
                           location.pathname === subItem.path
@@ -157,13 +176,22 @@ const Sidebar = () => {
                         "&:hover": { backgroundColor: "#1f6feb" },
                       }}
                     >
-                      <ListItemText
-                        primary={subItem.text}
-                        primaryTypographyProps={{
-                          fontSize: "1rem",
-                          color: "#fff", // Make sub-item text color white
+                      <Link
+                        to={subItem.path}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          textDecoration: "none",
+                          color: "#fff",
                         }}
-                      />
+                      >
+                        <ListItemText
+                          primary={subItem.text}
+                          primaryTypographyProps={{
+                            fontSize: "1rem",
+                          }}
+                        />
+                      </Link>
                     </ListItem>
                   ))}
                 </List>
@@ -171,7 +199,8 @@ const Sidebar = () => {
             )}
           </React.Fragment>
         ))}
-        {/* Logout Button */}
+
+        {/* Logout */}
         <ListItem
           button
           onClick={handleLogout}
