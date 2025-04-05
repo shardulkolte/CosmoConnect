@@ -164,7 +164,7 @@ const handleLogin = async () => {
   try {
     const res = await axios.post("http://localhost:5000/api/auth/login", formData);
     localStorage.setItem("token", res.data.token);
-    alert(res.data.message);
+    // alert(res.data.message);
     navigate("/dashboard");
   } catch (err) {
     alert(err?.response?.data?.message || "Login failed");
