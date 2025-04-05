@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import {
-  Container, TextField, Button, Typography, Box, Divider
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Divider,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,7 +18,7 @@ const Signup = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value});
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const navigate = useNavigate();
@@ -40,21 +45,110 @@ const Signup = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center", backgroundImage: `url('/images/space1.jpg')`, backgroundSize: "cover", backgroundPosition: "center" }}>
-      <Box sx={{ width: "400px", backgroundColor: "rgba(0, 0, 0, 0.8)", padding: "30px", borderRadius: "10px", boxShadow: "0 4px 10px rgba(255, 255, 255, 0.2)" }}>
-        <Typography variant="h4" sx={{ fontFamily: "cursive", textAlign: "center", color: "#fff" }}>CosmoConnect</Typography>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100vh",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundImage: `url('/images/space1.jpg')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: "400px",
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          padding: "30px",
+          borderRadius: "10px",
+          boxShadow: "0 4px 10px rgba(255, 255, 255, 0.2)",
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{ fontFamily: "cursive", textAlign: "center", color: "#fff" }}
+        >
+          CosmoConnect
+        </Typography>
         <Typography sx={{ color: "#fff", mt: 2 }}>Sign Up</Typography>
 
         <form onSubmit={handleSubmit}>
-          <TextField fullWidth label="User Name" name="username" value={formData.username} onChange={handleChange} margin="normal" InputLabelProps={{ style: { color: "#fff" } }} sx={{ input: { color: "#fff" }, fieldset: { borderColor: "rgba(255,255,255,0.5)" }, "&:hover fieldset": { borderColor: "#fff" } }} />
-          <TextField fullWidth label="Email Address" name="email" value={formData.email} onChange={handleChange} margin="normal" InputLabelProps={{ style: { color: "#fff" } }} sx={{ input: { color: "#fff" }, fieldset: { borderColor: "rgba(255,255,255,0.5)" }, "&:hover fieldset": { borderColor: "#fff" } }} />
-          <TextField fullWidth label="Password" name="password" type="password" value={formData.password} onChange={handleChange} margin="normal" InputLabelProps={{ style: { color: "#fff" } }} sx={{ input: { color: "#fff" }, fieldset: { borderColor: "rgba(255,255,255,0.5)" }, "&:hover fieldset": { borderColor: "#fff" } }} />
+          <TextField
+            fullWidth
+            label="User Name"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            margin="normal"
+            InputLabelProps={{ style: { color: "#fff" } }}
+            sx={{
+              input: { color: "#fff" },
+              fieldset: { borderColor: "rgba(255,255,255,0.5)" },
+              "&:hover fieldset": { borderColor: "#fff" },
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Email Address"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            margin="normal"
+            InputLabelProps={{ style: { color: "#fff" } }}
+            sx={{
+              input: { color: "#fff" },
+              fieldset: { borderColor: "rgba(255,255,255,0.5)" },
+              "&:hover fieldset": { borderColor: "#fff" },
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            margin="normal"
+            InputLabelProps={{ style: { color: "#fff" } }}
+            sx={{
+              input: { color: "#fff" },
+              fieldset: { borderColor: "rgba(255,255,255,0.5)" },
+              "&:hover fieldset": { borderColor: "#fff" },
+            }}
+          />
 
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 3, background: "linear-gradient(45deg, #007bff, #0056b3)", color: "#fff" }}>CONTINUE</Button>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 2,
+              mb: 3,
+              background: "linear-gradient(45deg, #007bff, #0056b3)",
+              color: "#fff",
+            }}
+          >
+            CONTINUE
+          </Button>
         </form>
 
         <Divider sx={{ my: 1, backgroundColor: "#fff" }} />
-        <Button fullWidth variant="outlined" sx={{ mt: 2, mb: 3, color: "#fff", borderColor: "rgba(255,255,255,0.5)", "&:hover": { borderColor: "#fff" } }} startIcon={<GoogleIcon />}>
+        <Button
+          fullWidth
+          variant="outlined"
+          sx={{
+            mt: 2,
+            mb: 3,
+            color: "#fff",
+            borderColor: "rgba(255,255,255,0.5)",
+            "&:hover": { borderColor: "#fff" },
+          }}
+          startIcon={<GoogleIcon />}
+          onClick={() =>
+            (window.location.href = "http://localhost:5000/api/auth/google")
+          }
+        >
           Sign Up with Google
         </Button>
 

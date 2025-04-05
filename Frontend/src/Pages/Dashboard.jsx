@@ -10,13 +10,29 @@ import {
   TextField,
 } from "@mui/material";
 import { faker } from "@faker-js/faker";
-import {
-  FavoriteBorder,
-} from "@mui/icons-material";
+import { FavoriteBorder } from "@mui/icons-material";
 import Siderbar from "../Components/Siderbar";
 import Appbar from "../Components/Appbar";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      localStorage.setItem("token", token);
+      // Clear the token from URL
+      window.history.replaceState({}, document.title, "/dashboard");
+    } else {
+      // Optional: redirect if no token
+      navigate("/login");
+    }
+  }, []);
+
   return (
     <Box
       sx={{
@@ -41,13 +57,12 @@ const Dashboard = () => {
       }}
     >
       {/* Sidebar */}
-      <Siderbar/>
-      
+      <Siderbar />
 
       {/* Main Content */}
       <Box sx={{ flexGrow: 1, p: 3, mt: 8 }}>
         {/* AppBar */}
-        <Appbar/>
+        <Appbar />
 
         {/* Post Card */}
         <Card
