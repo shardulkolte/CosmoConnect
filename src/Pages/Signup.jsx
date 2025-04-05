@@ -111,7 +111,7 @@ const Signup = () => {
         </Button>
 
         <Typography sx={{ textAlign: "center", mt: 2, color: "#ccc" }}>
-          Already have an account?{" "}
+          Already have an account ?{" "}
           <Link
             to="/" // Navigates to the Sign In page
             style={{
