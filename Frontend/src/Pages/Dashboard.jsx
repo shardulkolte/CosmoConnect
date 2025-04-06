@@ -17,22 +17,6 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  // const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const params = new URLSearchParams(window.location.search);
-  //   const token = params.get("token");
-
-  //   if (token) {
-  //     localStorage.setItem("token", token);
-  //     // Clear the token from URL
-  //     window.history.replaceState({}, document.title, "/dashboard");
-  //   } else {
-  //     // Optional: redirect if no token
-  //     navigate("/");
-  //   }
-  // }, []);
-
   const navigate = useNavigate();
 
   useEffect(() => {
