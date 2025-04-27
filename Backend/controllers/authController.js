@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Post = require("../models/Post");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -32,41 +33,55 @@ exports.loginUser = async (req, res) => {
 };
 
 exports.signupUser = async (req, res) => {
-    const { username, email, password } = req.body;
-  
-    try {
-      const userExists = await User.findOne({ email });
-      if (userExists) {
-        return res.status(400).json({ message: "User already exists" });
-      }
-  
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({ username, email, password: hashedPassword });
-  
-      await newUser.save();
-  
-      // Check for missing secret
-      if (!process.env.JWT_SECRET) {
-        console.error("JWT_SECRET not defined in .env");
-        return res.status(500).json({ message: "Server misconfiguration" });
-      }
-  
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
-  
-      res.status(201).json({
-        message: "User registered successfully",
-        token,
-        user: {
-          id: newUser._id,
-          email: newUser.email,
-        },
-      });
-    } catch (error) {
-      console.error("Signup Error:", error);
-      res.status(500).json({ message: "Server error" });
+  const { username, email, password } = req.body;
+
+  try {
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists" });
     }
-    console.log("Creating user:", { username, email });
-console.log("JWT_SECRET:", process.env.JWT_SECRET);
-  };
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, email, password: hashedPassword });
+
+    await newUser.save();
+
+    // Check for missing secret
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET not defined in .env");
+      return res.status(500).json({ message: "Server misconfiguration" });
+    }
+
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    console.error("Signup Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+  console.log("Creating user:", { username, email });
+  console.log("JWT_SECRET:", process.env.JWT_SECRET);
+};
+
+// exports.getMyPosts = async (req, res) => {
+//   try {
+//     // const posts = await Post.find({ postedBy: req.user.id })
+//     const posts = await Post.find({ user: req.user.id }).sort({
+//       createdAt: -1,
+//     }); // newest first
+
+//     res.json({ posts });
+//   } catch (error) {
+//     console.error("Error fetching user's posts:", error);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
