@@ -3,6 +3,11 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+const multer = require('multer');
+const cloudinary = require("../utils/cloudinary");
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 // Middleware to verify token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -56,5 +61,46 @@ router.put("/profile/update", verifyToken, async (req, res) => {
     }
   });
   
+
+
+
+// Update profile including uploading profile picture
+router.put("/profile/update", verifyToken, upload.single('profilePic'), async (req, res) => {
+  try {
+    let updateData = {
+      username: req.body.username,
+      bio: req.body.bio
+    };
+
+    if (req.file) {
+      // Upload image to Cloudinary
+      const result = await cloudinary.uploader.upload_stream(
+        { resource_type: "image", folder: "cosmoconnect/profilePics" },
+        async (error, result) => {
+          if (error) return res.status(500).json({ message: "Cloudinary upload error" });
+
+          updateData.profilePic = result.secure_url;
+
+          const updatedUser = await User.findByIdAndUpdate(req.userId, updateData, { new: true }).select("-password -googleId");
+
+          res.json(updatedUser);
+        }
+      );
+
+      // Create stream
+      const stream = require('stream');
+      const bufferStream = new stream.PassThrough();
+      bufferStream.end(req.file.buffer);
+      bufferStream.pipe(result);
+    } else {
+      // If no new file
+      const updatedUser = await User.findByIdAndUpdate(req.userId, updateData, { new: true }).select("-password -googleId");
+      res.json(updatedUser);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;
