@@ -4,6 +4,7 @@ const cors = require("cors");
 const passport = require("passport");
 const session = require("express-session");
 const userRoutes = require("./routes/userRoutes");
+const postRoutes = require("./routes/postRoutes");
 require("dotenv").config();
 require("./config/passport"); // make sure this is below `require("passport")` and AFTER env
 
@@ -34,6 +35,7 @@ app.use(passport.session());
 // ✅ Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api", userRoutes);
+app.use("/api/posts", postRoutes);
 
 // ✅ Protect Route Example
 const authenticateToken = require("./middleware/authMiddleware");

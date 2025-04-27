@@ -42,7 +42,7 @@ const sidebarItems = [
       { text: "Karma & Cosmos", path: "/community/karma-cosmos" },
     ],
   },
-  { icon: <AddBoxOutlined />, text: "Create", path: "/create" },
+  { icon: <AddBoxOutlined />, text: "Create", path: "/createpost" },
   {
     icon: <Settings />,
     text: "Settings",

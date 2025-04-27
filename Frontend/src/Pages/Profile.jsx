@@ -1,4 +1,3 @@
-
 // import React, { useState, useEffect } from "react";
 // import axios from "axios";
 // import {
@@ -28,6 +27,7 @@
 //     profilePic: "",
 //   });
 //   const [loadingUpdate, setLoadingUpdate] = useState(false);
+//   const [imageFile, setImageFile] = useState(null);
 
 //   const handleChange = (event, newValue) => {
 //     setTabValue(newValue);
@@ -37,7 +37,6 @@
 //     const fetchProfile = async () => {
 //       try {
 //         const token = localStorage.getItem("token");
-//         console.log("Fetched Token:", token);
 
 //         if (!token) {
 //           console.error("No token found!");
@@ -47,10 +46,9 @@
 //         const res = await axios.get("http://localhost:5000/api/profile/me", {
 //           headers: { Authorization: `Bearer ${token}` },
 //         });
-//         console.log("Fetched User:", res.data);
+
 //         setUser(res.data);
 
-//         // Prefill form data
 //         setFormData({
 //           username: res.data.username || "",
 //           bio: res.data.bio || "",
@@ -68,15 +66,53 @@
 //     setFormData({ ...formData, [e.target.name]: e.target.value });
 //   };
 
+//   const handleImageChange = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setImageFile(file);
+//     }
+//   };
+
+//   const uploadImageToCloudinary = async () => {
+//     if (!imageFile) return null;
+
+//     const data = new FormData();
+//     data.append("file", imageFile);
+//     data.append("upload_preset", "cosmoconnect"); // <-- Replace with your preset
+//     data.append("cloud_name", "dnggthvva");       // <-- Replace with your cloud name
+
+//     try {
+//       const res = await fetch("https://api.cloudinary.com/v1_1/dnggthvva/image/upload", {
+//         method: "POST",
+//         body: data,
+//       });
+//       const cloudData = await res.json();
+//       return cloudData.secure_url; // returning the uploaded image URL
+//     } catch (error) {
+//       console.error("Cloudinary upload failed:", error);
+//       return null;
+//     }
+//   };
+
 //   const handleUpdateProfile = async () => {
 //     try {
 //       setLoadingUpdate(true);
 //       const token = localStorage.getItem("token");
+
+//       let imageUrl = formData.profilePic;
+//       if (imageFile) {
+//         const uploadedUrl = await uploadImageToCloudinary();
+//         if (uploadedUrl) {
+//           imageUrl = uploadedUrl;
+//         }
+//       }
+
 //       const res = await axios.put(
 //         "http://localhost:5000/api/profile/update",
-//         formData,
+//         { ...formData, profilePic: imageUrl },
 //         { headers: { Authorization: `Bearer ${token}` } }
 //       );
+
 //       setUser(res.data);
 //       toast.success("Profile updated successfully!");
 //       setEditMode(false);
@@ -135,7 +171,7 @@
 //         >
 //           <Box sx={{ mt: 10, textAlign: "center", color: "#fff" }}>
 //             <Avatar
-//               src={user.profilePic || "/images/default-avatar.png"}
+//               src={formData.profilePic || "/images/default-avatar.png"}
 //               sx={{
 //                 width: 120,
 //                 height: 120,
@@ -152,12 +188,8 @@
 //                   onChange={handleInputChange}
 //                   fullWidth
 //                   sx={{ mt: 2 }}
-//                   InputProps={{
-//                     style: { color: "white" }, // <-- Text color
-//                   }}
-//                   InputLabelProps={{
-//                     style: { color: "white" }, // <-- Label color
-//                   }}
+//                   InputProps={{ style: { color: "white" } }}
+//                   InputLabelProps={{ style: { color: "white" } }}
 //                 />
 //                 <TextField
 //                   name="bio"
@@ -168,27 +200,22 @@
 //                   multiline
 //                   rows={2}
 //                   sx={{ mt: 2 }}
-//                   InputProps={{
-//                     style: { color: "white" }, // <-- Text color
-//                   }}
-//                   InputLabelProps={{
-//                     style: { color: "white" }, // <-- Label color
-//                   }}
+//                   InputProps={{ style: { color: "white" } }}
+//                   InputLabelProps={{ style: { color: "white" } }}
 //                 />
-//                 <TextField
-//                   name="profilePic"
-//                   label="Profile Pic URL"
-//                   value={formData.profilePic}
-//                   onChange={handleInputChange}
-//                   fullWidth
-//                   sx={{ mt: 2 }}
-//                   InputProps={{
-//                     style: { color: "white" }, // <-- Text color
-//                   }}
-//                   InputLabelProps={{
-//                     style: { color: "white" }, // <-- Label color
-//                   }}
-//                 />
+//                 <Button
+//                   variant="outlined"
+//                   component="label"
+//                   sx={{ mt: 2, color: "#1f6feb", borderColor: "#1f6feb" }}
+//                 >
+//                   Upload Profile Pic
+//                   <input
+//                     type="file"
+//                     hidden
+//                     accept="image/*"
+//                     onChange={handleImageChange}
+//                   />
+//                 </Button>
 //                 <Button
 //                   variant="contained"
 //                   sx={{ mt: 2 }}
@@ -332,11 +359,7 @@
 // export default Profile;
 
 
-
-
-
-//************************************************************************************** */
-
+//******************************************************************************** */
 
 
 import React, { useState, useEffect } from "react";
@@ -419,8 +442,8 @@ const Profile = () => {
 
     const data = new FormData();
     data.append("file", imageFile);
-    data.append("upload_preset", "cosmoconnect"); // <-- Replace with your preset
-    data.append("cloud_name", "dnggthvva");       // <-- Replace with your cloud name
+    data.append("upload_preset", "cosmoconnect"); 
+    data.append("cloud_name", "dnggthvva");      
 
     try {
       const res = await fetch("https://api.cloudinary.com/v1_1/dnggthvva/image/upload", {
@@ -428,7 +451,7 @@ const Profile = () => {
         body: data,
       });
       const cloudData = await res.json();
-      return cloudData.secure_url; // returning the uploaded image URL
+      return cloudData.secure_url;
     } catch (error) {
       console.error("Cloudinary upload failed:", error);
       return null;
@@ -468,6 +491,10 @@ const Profile = () => {
   if (!user) {
     return <Typography sx={{ mt: 10, textAlign: "center" }}>Loading...</Typography>;
   }
+
+  const posts = user.posts || [];
+  const followers = user.followers || [];
+  const following = user.following || [];
 
   return (
     <Box
@@ -510,7 +537,7 @@ const Profile = () => {
             p: 2,
           }}
         >
-          <Box sx={{ mt: 10, textAlign: "center", color: "#fff" }}>
+          <Box sx={{ mt: 10, textAlign: "center" }}>
             <Avatar
               src={formData.profilePic || "/images/default-avatar.png"}
               sx={{
@@ -605,7 +632,7 @@ const Profile = () => {
           <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
             <Box sx={{ mx: 4, textAlign: "center" }}>
               <Typography variant="h6" fontWeight="bold">
-                {user.posts.length}
+                {posts.length}
               </Typography>
               <Typography variant="body2" color="gray">
                 Posts
@@ -613,7 +640,7 @@ const Profile = () => {
             </Box>
             <Box sx={{ mx: 4, textAlign: "center" }}>
               <Typography variant="h6" fontWeight="bold">
-                {user.followers.length}
+                {followers.length}
               </Typography>
               <Typography variant="body2" color="gray">
                 Followers
@@ -621,7 +648,7 @@ const Profile = () => {
             </Box>
             <Box sx={{ mx: 4, textAlign: "center" }}>
               <Typography variant="h6" fontWeight="bold">
-                {user.following.length}
+                {following.length}
               </Typography>
               <Typography variant="body2" color="gray">
                 Following
@@ -646,7 +673,7 @@ const Profile = () => {
           <Box sx={{ width: "80%", mt: 3 }}>
             {tabValue === 0 && (
               <Grid container spacing={3} justifyContent="center">
-                {user.posts.map((post) => (
+                {posts.map((post) => (
                   <Grid item key={post._id} xs={12} sm={6} md={4}>
                     <Card
                       sx={{

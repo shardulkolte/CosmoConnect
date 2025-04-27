@@ -6,7 +6,7 @@ import Dashboard from "./Pages/Dashboard";
 import Signup from "./Pages/Signup";
 import Profile from "./Pages/Profile";
 import PrivateRoute from "./Components/PrivateRoute";
-import GoogleAuthRedirect from "./Pages/GoogleAuthRedirect";
+import CreatePost from "./Pages/CreatePost";
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
           }
         />
         {/* <Route path="/google-redirect" element={<GoogleAuthRedirect />} /> */}
+        <Route path="/createpost" element={<CreatePost />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
       </Routes>
     </Router>
