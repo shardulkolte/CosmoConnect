@@ -32,4 +32,29 @@ router.get("/profile/me", verifyToken, async (req, res) => {
   }
 });
 
+// Update profile
+router.put("/profile/update", verifyToken, async (req, res) => {
+    try {
+      const { username, bio, profilePic } = req.body;
+  
+      const updatedUser = await User.findByIdAndUpdate(
+        req.userId,
+        {
+          username,
+          bio,
+          profilePic,
+        },
+        { new: true, runValidators: true }
+      ).select("-password -googleId");
+  
+      if (!updatedUser) return res.status(404).json({ message: "User not found" });
+  
+      res.json(updatedUser);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error while updating profile" });
+    }
+  });
+  
+
 module.exports = router;

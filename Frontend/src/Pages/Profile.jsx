@@ -1,4 +1,236 @@
 
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import {
+//   Avatar,
+//   Box,
+//   Card,
+//   CardContent,
+//   Typography,
+//   Button,
+//   Tabs,
+//   Tab,
+//   Grid,
+// } from "@mui/material";
+// import { Edit } from "@mui/icons-material";
+// import Siderbar from "../Components/Siderbar";
+// import Appbar from "../Components/Appbar";
+
+// const Profile = () => {
+//   const [tabValue, setTabValue] = useState(0);
+//   const [user, setUser] = useState(null);
+
+//   const handleChange = (event, newValue) => {
+//     setTabValue(newValue);
+//   };
+
+//   useEffect(() => {
+//     const fetchProfile = async () => {
+//       try {
+//         const token = localStorage.getItem("token");
+//         console.log("Fetched Token:", token); // 👈
+  
+//         if (!token) {
+//           console.error("No token found!");
+//           return;
+//         }
+  
+//         const res = await axios.get("http://localhost:5000/api/profile/me", {
+//           headers: { Authorization: `Bearer ${token}` }
+//         });
+//         console.log("Fetched User:", res.data); // 👈
+//         setUser(res.data);
+//       } catch (err) {
+//         console.error("Failed to fetch profile:", err); // 👈
+//       }
+//     };
+  
+//     fetchProfile();
+//   }, []);
+  
+
+//   if (!user) {
+//     return <Typography sx={{ mt: 10, textAlign: "center" }}>Loading...</Typography>;
+//   }
+
+//   return (
+//     <Box
+//       sx={{
+//         display: "flex",
+//         minHeight: "100vh",
+//         position: "relative",
+//         overflow: "hidden",
+//         "&::before": {
+//           content: '""',
+//           position: "absolute",
+//           top: 0,
+//           left: 0,
+//           width: "100%",
+//           height: "100%",
+//           backgroundImage: `url('/images/space2.jpg')`,
+//           backgroundSize: "cover",
+//           backgroundPosition: "center",
+//           backgroundRepeat: "no-repeat",
+//           opacity: 0.87,
+//           zIndex: -1,
+//         },
+//       }}
+//     >
+//       {/* Sidebar */}
+//       <Siderbar />
+
+//       {/* Main Content */}
+//       <Box sx={{ flexGrow: 1, mt: 8 }}>
+//         <Appbar />
+
+//         {/* Profile Card */}
+//         <Card
+//           sx={{
+//             maxWidth: 1600,
+//             mx: "auto",
+//             background: "rgba(28, 33, 40, 0.9)",
+//             color: "#fff",
+//             borderRadius: 3,
+//             p: 2,
+//           }}
+//         >
+//           <Box sx={{ mt: 10, textAlign: "center", color: "#fff" }}>
+//             <Avatar
+//               src={user.profilePic || "/images/default-avatar.png"}
+//               sx={{
+//                 width: 120,
+//                 height: 120,
+//                 mx: "auto",
+//                 border: "3px solid #1f6feb",
+//               }}
+//             />
+//             <Typography variant="h4" sx={{ mt: 1, fontWeight: "bold" }}>
+//               {user.username}
+//             </Typography>
+//             <Typography
+//               variant="body1"
+//               sx={{ fontStyle: "italic", color: "gray", mt: 1 }}
+//             >
+//               {user.bio || "No bio added yet."}
+//             </Typography>
+//             <Button
+//               variant="outlined"
+//               startIcon={<Edit />}
+//               sx={{
+//                 mt: 2,
+//                 color: "#1f6feb",
+//                 borderColor: "#1f6feb",
+//                 "&:hover": { borderColor: "#fff" },
+//               }}
+//             >
+//               Edit Profile
+//             </Button>
+//           </Box>
+
+//           {/* Stats */}
+//           <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+//             <Box sx={{ mx: 4, textAlign: "center" }}>
+//               <Typography variant="h6" fontWeight="bold">
+//                 {user.posts.length}
+//               </Typography>
+//               <Typography variant="body2" color="gray">
+//                 Posts
+//               </Typography>
+//             </Box>
+//             <Box sx={{ mx: 4, textAlign: "center" }}>
+//               <Typography variant="h6" fontWeight="bold">
+//                 {user.followers.length}
+//               </Typography>
+//               <Typography variant="body2" color="gray">
+//                 Followers
+//               </Typography>
+//             </Box>
+//             <Box sx={{ mx: 4, textAlign: "center" }}>
+//               <Typography variant="h6" fontWeight="bold">
+//                 {user.following.length}
+//               </Typography>
+//               <Typography variant="body2" color="gray">
+//                 Following
+//               </Typography>
+//             </Box>
+//           </Box>
+
+//           {/* Tabs */}
+//           <Tabs
+//             value={tabValue}
+//             onChange={handleChange}
+//             textColor="inherit"
+//             indicatorColor="primary"
+//             sx={{ mt: 3, color: "#fff", borderBottom: "1px solid #30363d" }}
+//           >
+//             <Tab label="Posts" />
+//             <Tab label="Followers" />
+//             <Tab label="Following" />
+//           </Tabs>
+
+//           {/* Tab Content */}
+//           <Box sx={{ width: "80%", mt: 3 }}>
+//             {tabValue === 0 && (
+//               <Grid container spacing={3} justifyContent="center">
+//                 {user.posts.map((post) => (
+//                   <Grid item key={post._id} xs={12} sm={6} md={4}>
+//                     <Card
+//                       sx={{
+//                         background: "#1c2128",
+//                         color: "#fff",
+//                         borderRadius: 3,
+//                       }}
+//                     >
+//                       <img
+//                         src={post.image}
+//                         alt="Post"
+//                         style={{
+//                           width: "100%",
+//                           height: 200,
+//                           objectFit: "cover",
+//                           borderRadius: "8px 8px 0 0",
+//                         }}
+//                       />
+//                       <CardContent>
+//                         <Typography variant="body2">{post.caption}</Typography>
+//                         <Typography
+//                           variant="body2"
+//                           color="primary"
+//                           sx={{ mt: 1 }}
+//                         >
+//                           {post.likes} Likes
+//                         </Typography>
+//                       </CardContent>
+//                     </Card>
+//                   </Grid>
+//                 ))}
+//               </Grid>
+//             )}
+//             {tabValue === 1 && (
+//               <Typography color="gray" sx={{ textAlign: "center", mt: 3 }}>
+//                 Followers list feature coming soon...
+//               </Typography>
+//             )}
+//             {tabValue === 2 && (
+//               <Typography color="gray" sx={{ textAlign: "center", mt: 3 }}>
+//                 Following list feature coming soon...
+//               </Typography>
+//             )}
+//           </Box>
+//         </Card>
+//       </Box>
+//     </Box>
+//   );
+// };
+
+// export default Profile;
+
+
+
+
+//**************************************************************************************************************** */
+
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -11,14 +243,23 @@ import {
   Tabs,
   Tab,
   Grid,
+  TextField,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import Siderbar from "../Components/Siderbar";
 import Appbar from "../Components/Appbar";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const [tabValue, setTabValue] = useState(0);
   const [user, setUser] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    bio: "",
+    profilePic: "",
+  });
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
 
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
@@ -28,26 +269,56 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        console.log("Fetched Token:", token); // 👈
-  
+        console.log("Fetched Token:", token);
+
         if (!token) {
           console.error("No token found!");
           return;
         }
-  
+
         const res = await axios.get("http://localhost:5000/api/profile/me", {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Fetched User:", res.data); // 👈
+        console.log("Fetched User:", res.data);
         setUser(res.data);
+
+        // Prefill form data
+        setFormData({
+          username: res.data.username || "",
+          bio: res.data.bio || "",
+          profilePic: res.data.profilePic || "",
+        });
       } catch (err) {
-        console.error("Failed to fetch profile:", err); // 👈
+        console.error("Failed to fetch profile:", err);
       }
     };
-  
+
     fetchProfile();
   }, []);
-  
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      setLoadingUpdate(true);
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        "http://localhost:5000/api/profile/update",
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setUser(res.data);
+      toast.success("Profile updated successfully!");
+      setEditMode(false);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      toast.error("Failed to update profile");
+    } finally {
+      setLoadingUpdate(false);
+    }
+  };
 
   if (!user) {
     return <Typography sx={{ mt: 10, textAlign: "center" }}>Loading...</Typography>;
@@ -104,27 +375,94 @@ const Profile = () => {
                 border: "3px solid #1f6feb",
               }}
             />
-            <Typography variant="h4" sx={{ mt: 1, fontWeight: "bold" }}>
-              {user.username}
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ fontStyle: "italic", color: "gray", mt: 1 }}
-            >
-              {user.bio || "No bio added yet."}
-            </Typography>
-            <Button
-              variant="outlined"
-              startIcon={<Edit />}
-              sx={{
-                mt: 2,
-                color: "#1f6feb",
-                borderColor: "#1f6feb",
-                "&:hover": { borderColor: "#fff" },
-              }}
-            >
-              Edit Profile
-            </Button>
+            {editMode ? (
+              <>
+                <TextField
+                  name="username"
+                  label="Username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  InputProps={{
+                    style: { color: "white" }, // <-- Text color
+                  }}
+                  InputLabelProps={{
+                    style: { color: "white" }, // <-- Label color
+                  }}
+                />
+                <TextField
+                  name="bio"
+                  label="Bio"
+                  value={formData.bio}
+                  onChange={handleInputChange}
+                  fullWidth
+                  multiline
+                  rows={2}
+                  sx={{ mt: 2 }}
+                  InputProps={{
+                    style: { color: "white" }, // <-- Text color
+                  }}
+                  InputLabelProps={{
+                    style: { color: "white" }, // <-- Label color
+                  }}
+                />
+                <TextField
+                  name="profilePic"
+                  label="Profile Pic URL"
+                  value={formData.profilePic}
+                  onChange={handleInputChange}
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  InputProps={{
+                    style: { color: "white" }, // <-- Text color
+                  }}
+                  InputLabelProps={{
+                    style: { color: "white" }, // <-- Label color
+                  }}
+                />
+                <Button
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                  onClick={handleUpdateProfile}
+                  disabled={loadingUpdate}
+                >
+                  {loadingUpdate ? "Updating..." : "Save Changes"}
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{ mt: 2, ml: 2 }}
+                  onClick={() => setEditMode(false)}
+                >
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <>
+                <Typography variant="h4" sx={{ mt: 1, fontWeight: "bold" }}>
+                  {user.username}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ fontStyle: "italic", color: "gray", mt: 1 }}
+                >
+                  {user.bio || "No bio added yet."}
+                </Typography>
+                <Button
+                  variant="outlined"
+                  startIcon={<Edit />}
+                  sx={{
+                    mt: 2,
+                    color: "#1f6feb",
+                    borderColor: "#1f6feb",
+                    "&:hover": { borderColor: "#fff" },
+                  }}
+                  onClick={() => setEditMode(true)}
+                >
+                  Edit Profile
+                </Button>
+              </>
+            )}
           </Box>
 
           {/* Stats */}
