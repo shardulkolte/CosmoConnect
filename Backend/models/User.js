@@ -30,10 +30,10 @@ const mongoose = require("mongoose");
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String }, // Optional for Google-authenticated users
-  googleId: { type: String }, // Optional for Google users
-  profilePic: { type: String, default: "" }, // URL of profile picture
-  bio: { type: String, default: "" }, // Small bio/description
+  password: { type: String }, 
+  googleId: { type: String }, 
+  profilePic: { type: String, default: "" }, 
+  bio: { type: String, default: "" }, 
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 }, { timestamps: true });

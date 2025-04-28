@@ -7,6 +7,7 @@ import Signup from "./Pages/Signup";
 import Profile from "./Pages/Profile";
 import PrivateRoute from "./Components/PrivateRoute";
 import CreatePost from "./Pages/CreatePost";
+import UserProfile from "./Pages/UserProfile";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         />
         {/* <Route path="/google-redirect" element={<GoogleAuthRedirect />} /> */}
         <Route path="/createpost" element={<CreatePost />}></Route>
+        <Route path="/user/:id" element={<UserProfile />} />
         <Route path="/profile" element={<Profile />}></Route>
       </Routes>
     </Router>

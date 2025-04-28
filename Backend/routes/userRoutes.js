@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Post = require("../models/Post");
 
 const multer = require('multer');
 const cloudinary = require("../utils/cloudinary");
@@ -102,5 +103,24 @@ router.put("/profile/update", verifyToken, upload.single('profilePic'), async (r
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+// Fetch any user's profile by ID
+router.get("/profile/user/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId).select("-password"); // hide password
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    const posts = await Post.find({ user: userId }).sort({ createdAt: -1 });
+
+    res.json({ user, posts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 
 module.exports = router;

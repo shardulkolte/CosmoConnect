@@ -20,8 +20,8 @@ const verifyToken = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, "yourSuperSecretKey123"); // 👈 replace with your JWT secret
-    req.user = decoded; // Attach decoded user info to request
+    const decoded = jwt.verify(token, "yourSuperSecretKey123");
+    req.user = decoded; 
     next();
   } catch (error) {
     return res.status(401).json({ message: "Unauthorized: Invalid or expired token", error: error.message });
@@ -50,11 +50,11 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 });
 
 // Create a Post
-router.post("/create", verifyToken, async (req, res) => { // 👈 Add verifyToken middleware
+router.post("/create", verifyToken, async (req, res) => { 
   console.log(req.body);
   try {
     const { image, caption, category, hashtags } = req.body;
-    const userId = req.user.id; // 👈 Extract userId from decoded token
+    const userId = req.user.id; 
 
     if (!userId || !image) {
       return res.status(400).json({ message: "User ID and image are required." });
