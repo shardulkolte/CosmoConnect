@@ -1,0 +1,110 @@
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Avatar,
+} from "@mui/material";
+import { FavoriteBorder } from "@mui/icons-material";
+import Siderbar from "../Components/Siderbar";
+import Appbar from "../Components/Appbar";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const ScienceAndSpacePosts = () => {
+  const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/posts/category/Science and Space"
+        );
+        setPosts(res.data);
+      } catch (error) {
+        console.error("Failed to load Science and Space posts", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  return (
+    <Box sx={{ display: "flex", minHeight: "100vh", position: "relative", overflow: "hidden",
+      "&::before": {
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundImage: `url('/images/space2.jpg')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        opacity: 0.87,
+        zIndex: -1,
+      }
+    }}>
+      <Siderbar />
+      <Box sx={{ flexGrow: 1, p: 3, mt: 8 }}>
+        <Appbar />
+        {posts.map((post) => (
+          <Card key={post._id} sx={{
+            maxWidth: 600,
+            mx: "auto",
+            mt: 4,
+            background: "rgba(28, 33, 40, 0.9)",
+            color: "#fff",
+            borderRadius: 3,
+            p: 2,
+          }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Avatar
+                sx={{ mr: 2, cursor: "pointer" }}
+                src={post.user?.profilePic}
+                onClick={() => navigate(`/user/${post.user?._id}`)}
+              />
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  {post.user?.username}
+                </Typography>
+                <Typography variant="caption" color="gray">
+                  {post.category}
+                </Typography>
+              </Box>
+            </Box>
+            <Box sx={{ mt: 2 }}>
+              <img
+                src={post.image}
+                alt="Post"
+                style={{ width: "100%", borderRadius: 8 }}
+              />
+            </Box>
+            <CardContent>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                {post.caption}
+              </Typography>
+              <Typography variant="body2" color="primary">
+                {post.hashtags.map((tag, index) => (
+                  <span key={index}>#{tag} </span>
+                ))}
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                <IconButton sx={{ color: "#1f6feb" }}>
+                  <FavoriteBorder />
+                </IconButton>
+                <Typography variant="body2">0 likes</Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+export default ScienceAndSpacePosts;

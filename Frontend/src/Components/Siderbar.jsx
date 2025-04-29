@@ -26,21 +26,21 @@ const sidebarItems = [
   { icon: <Search />, text: "Search", path: "/search" },
   {
     icon: <Group />,
-    text: "Science & Space",
-    subItems: [
-      { text: "AstroTech", path: "/community/astrotech" },
-      { text: "CosmoPhysics", path: "/community/cosmophysics" },
-      { text: "Alien Talk", path: "/community/alien-talk" },
-    ],
+    text: "Science & Space",path: "/science&space"
+    // subItems: [
+    //   { text: "AstroTech", path: "/community/astrotech" },
+    //   { text: "CosmoPhysics", path: "/community/cosmophysics" },
+    //   { text: "Alien Talk", path: "/community/alien-talk" },
+    // ],
   },
   {
     icon: <Group />,
-    text: "Spiritual Cosmos",
-    subItems: [
-      { text: "Vedic Space", path: "/community/vedic-space" },
-      { text: "MetaEnergy", path: "/community/metaenergy" },
-      { text: "Karma & Cosmos", path: "/community/karma-cosmos" },
-    ],
+    text: "Spiritual Cosmos",path: "/spritualcosmos"
+    // subItems: [
+    //   { text: "Vedic Space", path: "/community/vedic-space" },
+    //   { text: "MetaEnergy", path: "/community/metaenergy" },
+    //   { text: "Karma & Cosmos", path: "/community/karma-cosmos" },
+    // ],
   },
   { icon: <AddBoxOutlined />, text: "Create", path: "/createpost" },
   {

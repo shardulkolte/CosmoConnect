@@ -94,4 +94,21 @@ router.get("/all", async (req, res) => {
 // Get logged-in user's posts
 router.get('/myposts', protect, getMyPosts);
 
+// Get posts by category
+router.get("/category/:categoryName", async (req, res) => {
+  try {
+    const category = req.params.categoryName;
+
+    const posts = await Post.find({ category })
+      .populate("user", "username profilePic")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error fetching category posts:", error);
+    res.status(500).json({ message: "Something went wrong." });
+  }
+});
+
+
 module.exports = router;
