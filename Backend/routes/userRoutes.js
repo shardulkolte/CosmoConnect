@@ -4,12 +4,12 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Post = require("../models/Post");
 
-const multer = require('multer');
+const multer = require("multer");
 const cloudinary = require("../utils/cloudinary");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const { authenticateUser } = require('../middleware/authMiddleware');
+const { authenticateUser } = require("../middleware/authMiddleware");
 
 // Middleware to verify token
 const verifyToken = (req, res, next) => {
@@ -17,7 +17,8 @@ const verifyToken = (req, res, next) => {
   if (!token) return res.status(401).json({ message: "No token provided" });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.status(403).json({ message: "Failed to authenticate token" });
+    if (err)
+      return res.status(403).json({ message: "Failed to authenticate token" });
     req.userId = decoded.id;
     next();
   });
@@ -38,12 +39,11 @@ router.get("/profile/me", verifyToken, async (req, res) => {
       username: user.username,
       email: user.email,
       profilePic: user.profilePic,
-      bio:user.bio,
+      bio: user.bio,
       followers: user.followers,
       following: user.following,
     });
-    // 
-    
+    //
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -52,83 +52,101 @@ router.get("/profile/me", verifyToken, async (req, res) => {
 
 // Update profile
 router.put("/profile/update", verifyToken, async (req, res) => {
-    try {
-      const { username, bio, profilePic } = req.body;
-  
-      const updatedUser = await User.findByIdAndUpdate(
-        req.userId,
-        {
-          username,
-          bio,
-          profilePic,
-        },
-        { new: true, runValidators: true }
-      ).select("-password -googleId");
-  
-      if (!updatedUser) return res.status(404).json({ message: "User not found" });
-  
-      res.json(updatedUser);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Server error while updating profile" });
-    }
-  });
-  
-
-
-
-// Update profile including uploading profile picture
-router.put("/profile/update", verifyToken, upload.single('profilePic'), async (req, res) => {
   try {
-    let updateData = {
-      username: req.body.username,
-      bio: req.body.bio
-    };
+    const { username, bio, profilePic } = req.body;
 
-    if (req.file) {
-      // Upload image to Cloudinary
-      const result = await cloudinary.uploader.upload_stream(
-        { resource_type: "image", folder: "cosmoconnect/profilePics" },
-        async (error, result) => {
-          if (error) return res.status(500).json({ message: "Cloudinary upload error" });
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      {
+        username,
+        bio,
+        profilePic,
+      },
+      { new: true, runValidators: true }
+    ).select("-password -googleId");
 
-          updateData.profilePic = result.secure_url;
+    if (!updatedUser)
+      return res.status(404).json({ message: "User not found" });
 
-          const updatedUser = await User.findByIdAndUpdate(req.userId, updateData, { new: true }).select("-password -googleId");
-
-          res.json(updatedUser);
-        }
-      );
-
-      // Create stream
-      const stream = require('stream');
-      const bufferStream = new stream.PassThrough();
-      bufferStream.end(req.file.buffer);
-      bufferStream.pipe(result);
-    } else {
-      // If no new file
-      const updatedUser = await User.findByIdAndUpdate(req.userId, updateData, { new: true }).select("-password -googleId");
-      res.json(updatedUser);
-    }
+    res.json(updatedUser);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error while updating profile" });
   }
 });
 
+// Update profile including uploading profile picture
+router.put(
+  "/profile/update",
+  verifyToken,
+  upload.single("profilePic"),
+  async (req, res) => {
+    try {
+      let updateData = {
+        username: req.body.username,
+        bio: req.body.bio,
+      };
 
-// Fetch any user's profile by ID
+      if (req.file) {
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload_stream(
+          { resource_type: "image", folder: "cosmoconnect/profilePics" },
+          async (error, result) => {
+            if (error)
+              return res
+                .status(500)
+                .json({ message: "Cloudinary upload error" });
+
+            updateData.profilePic = result.secure_url;
+
+            const updatedUser = await User.findByIdAndUpdate(
+              req.userId,
+              updateData,
+              { new: true }
+            ).select("-password -googleId");
+
+            res.json(updatedUser);
+          }
+        );
+
+        // Create stream
+        const stream = require("stream");
+        const bufferStream = new stream.PassThrough();
+        bufferStream.end(req.file.buffer);
+        bufferStream.pipe(result);
+      } else {
+        // If no new file
+        const updatedUser = await User.findByIdAndUpdate(
+          req.userId,
+          updateData,
+          { new: true }
+        ).select("-password -googleId");
+        res.json(updatedUser);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
 router.get("/profile/user/:id", authenticateUser, async (req, res) => {
   try {
     const userId = req.params.id;
     const currentUserId = req.user.id;
 
-    const user = await User.findById(userId).select("-password");
+    const user = await User.findById(userId)
+      .select("-password")
+      .populate("followers", "username profilePic") // Populate full user info
+      .populate("following", "username profilePic");
+
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     const posts = await Post.find({ user: userId }).sort({ createdAt: -1 });
 
-    const isFollowing = user.followers.includes(currentUserId);
+    const isFollowing = user.followers.some(
+      (follower) => follower._id.toString() === currentUserId
+    );
 
     res.json({ user, posts, isFollowing });
   } catch (error) {
@@ -138,9 +156,8 @@ router.get("/profile/user/:id", authenticateUser, async (req, res) => {
 });
 
 
-
 // follow a user
-router.put('/profile/follow/:id', authenticateUser, async (req, res) => {
+router.put("/profile/follow/:id", authenticateUser, async (req, res) => {
   try {
     const userToFollowId = req.params.id;
     const currentUserId = req.user.id;
@@ -174,7 +191,7 @@ router.put('/profile/follow/:id', authenticateUser, async (req, res) => {
 });
 
 // unfollow a user
-router.put('/profile/unfollow/:id', authenticateUser, async (req, res) => {
+router.put("/profile/unfollow/:id", authenticateUser, async (req, res) => {
   try {
     const userToUnfollowId = req.params.id;
     const currentUserId = req.user.id;
@@ -203,6 +220,24 @@ router.put('/profile/unfollow/:id', authenticateUser, async (req, res) => {
   }
 });
 
+
+// GET /api/profile/search?q=keyword
+router.get("/profile/search", authenticateUser, async (req, res) => {
+  try {
+    const query = req.query.q;
+    const users = await User.find({
+      $or: [
+        { username: { $regex: query, $options: "i" } },
+        { bio: { $regex: query, $options: "i" } },
+      ],
+    }).select("username bio profilePic");
+
+    res.json({ users });
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
 
 
 module.exports = router;

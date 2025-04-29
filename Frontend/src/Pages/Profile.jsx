@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -344,13 +342,6 @@ const Profile = () => {
                           <Typography variant="body2">
                             {post.caption}
                           </Typography>
-                          {/* <Typography
-                            variant="body2"
-                            color="primary"
-                            // sx={{ mt: 1 }}
-                          >
-                            {post.likes.length} Likes
-                          </Typography> */}
                         </CardContent>
                       </Card>
                     </Grid>
@@ -364,15 +355,65 @@ const Profile = () => {
             )}
 
             {tabValue === 1 && (
-              <Typography color="gray" sx={{ textAlign: "center", mt: 3 }}>
-                Followers list feature coming soon...
-              </Typography>
+              <Box sx={{ mt: 3 }}>
+                {user?.followers?.length === 0 ? (
+                  <Typography color="gray" textAlign="center">
+                    No followers yet.
+                  </Typography>
+                ) : (
+                  user.followers.map((follower) => (
+                    <Box
+                      key={follower._id}
+                      onClick={() =>
+                        (window.location.href = `/user/${follower._id}`)
+                      }
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        mb: 2,
+                        cursor: "pointer",
+                        p: 1,
+                        "&:hover": { background: "#2c2f36", borderRadius: 2 },
+                      }}
+                    >
+                      <Avatar src={follower.profilePic} />
+                      <Typography>{follower.username}</Typography>
+                    </Box>
+                  ))
+                )}
+              </Box>
             )}
 
             {tabValue === 2 && (
-              <Typography color="gray" sx={{ textAlign: "center", mt: 3 }}>
-                Following list feature coming soon...
-              </Typography>
+              <Box sx={{ mt: 3 }}>
+                {user?.following?.length === 0 ? (
+                  <Typography color="gray" textAlign="center">
+                    Not following anyone.
+                  </Typography>
+                ) : (
+                  user.following.map((followed) => (
+                    <Box
+                      key={followed._id}
+                      onClick={() =>
+                        (window.location.href = `/user/${followed._id}`)
+                      }
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        mb: 2,
+                        cursor: "pointer",
+                        p: 1,
+                        "&:hover": { background: "#2c2f36", borderRadius: 2 },
+                      }}
+                    >
+                      <Avatar src={followed.profilePic} />
+                      <Typography>{followed.username}</Typography>
+                    </Box>
+                  ))
+                )}
+              </Box>
             )}
           </Box>
         </Card>

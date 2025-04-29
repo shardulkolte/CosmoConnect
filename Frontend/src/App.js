@@ -9,6 +9,7 @@ import CreatePost from "./Pages/CreatePost";
 import UserProfile from "./Pages/UserProfile";
 import ScienceAndSpacePosts from "./Pages/ScienceSpace";
 import Sprituality from "./Pages/Sprituality";
+import Search from "./Pages/Search";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/user/:id" element={<UserProfile />} />
         <Route path="/science&space" element={<ScienceAndSpacePosts />}></Route>
         <Route path="/spritualcosmos" element={<Sprituality />}></Route>
+        <Route path="/search" element={<Search />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
       </Routes>
     </Router>

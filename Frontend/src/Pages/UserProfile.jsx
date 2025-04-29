@@ -208,11 +208,13 @@ const OtherUserProfile = () => {
             sx={{ mt: 3, color: "#fff", borderBottom: "1px solid #30363d" }}
           >
             <Tab label="Posts" />
+            <Tab label="Followers" />
+            <Tab label="Following" />
           </Tabs>
 
           <Box sx={{ width: "80%", mt: 3 }}>
             {tabValue === 0 && (
-              <Grid container spacing={2} justifyContent="flex-start">
+              <Grid container spacing={7} justifyContent="flex-start" ml={10}>
                 {posts?.length > 0 ? (
                   posts.map((post) => (
                     <Grid item key={post._id} xs={12} sm={6} md={4}>
@@ -247,6 +249,68 @@ const OtherUserProfile = () => {
                   </Typography>
                 )}
               </Grid>
+            )}
+
+            {tabValue === 1 && (
+              <Box sx={{ mt: 3 }}>
+                {user?.followers?.length === 0 ? (
+                  <Typography color="gray" textAlign="center">
+                    No followers yet.
+                  </Typography>
+                ) : (
+                  user.followers.map((follower) => (
+                    <Box
+                      key={follower._id}
+                      onClick={() =>
+                        (window.location.href = `/user/${follower._id}`)
+                      }
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        mb: 2,
+                        cursor: "pointer",
+                        p: 1,
+                        "&:hover": { background: "#2c2f36", borderRadius: 2 },
+                      }}
+                    >
+                      <Avatar src={follower.profilePic} />
+                      <Typography>{follower.username}</Typography>
+                    </Box>
+                  ))
+                )}
+              </Box>
+            )}
+
+            {tabValue === 2 && (
+              <Box sx={{ mt: 3 }}>
+                {user?.following?.length === 0 ? (
+                  <Typography color="gray" textAlign="center">
+                    Not following anyone.
+                  </Typography>
+                ) : (
+                  user.following.map((followed) => (
+                    <Box
+                      key={followed._id}
+                      onClick={() =>
+                        (window.location.href = `/user/${followed._id}`)
+                      }
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        mb: 2,
+                        cursor: "pointer",
+                        p: 1,
+                        "&:hover": { background: "#2c2f36", borderRadius: 2 },
+                      }}
+                    >
+                      <Avatar src={followed.profilePic} />
+                      <Typography>{followed.username}</Typography>
+                    </Box>
+                  ))
+                )}
+              </Box>
             )}
           </Box>
         </Card>
