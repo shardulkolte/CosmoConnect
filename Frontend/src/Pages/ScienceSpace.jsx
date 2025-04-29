@@ -33,35 +33,58 @@ const ScienceAndSpacePosts = () => {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", position: "relative", overflow: "hidden",
-      "&::before": {
-        content: '""',
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundImage: `url('/images/space2.jpg')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        opacity: 0.87,
-        zIndex: -1,
-      }
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        position: "relative",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      {/* Fixed Background */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage: `url('/images/space2.jpg')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          zIndex: -1,
+        }}
+      />
+
+      {/* Sidebar */}
       <Siderbar />
-      <Box sx={{ flexGrow: 1, p: 3, mt: 8 }}>
+
+      {/* Scrollable Content */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          maxHeight: "100vh",
+          p: 3,
+          mt: 8,
+        }}
+      >
         <Appbar />
+
         {posts.map((post) => (
-          <Card key={post._id} sx={{
-            maxWidth: 600,
-            mx: "auto",
-            mt: 4,
-            background: "rgba(28, 33, 40, 0.9)",
-            color: "#fff",
-            borderRadius: 3,
-            p: 2,
-          }}>
+          <Card
+            key={post._id}
+            sx={{
+              maxWidth: 600,
+              mx: "auto",
+              mt: 4,
+              background: "rgba(28, 33, 40, 0.9)",
+              color: "#fff",
+              borderRadius: 3,
+              p: 2,
+            }}
+          >
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Avatar
                 sx={{ mr: 2, cursor: "pointer" }}

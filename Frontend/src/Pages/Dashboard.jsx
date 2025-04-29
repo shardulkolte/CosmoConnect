@@ -48,12 +48,15 @@ const Dashboard = () => {
     <Box
       sx={{
         display: "flex",
-        minHeight: "100vh",
         position: "relative",
+        height: "100vh",
         overflow: "hidden",
-        "&::before": {
-          content: '""',
-          position: "absolute",
+      }}
+    >
+      {/* Fixed Background */}
+      <Box
+        sx={{
+          position: "fixed",
           top: 0,
           left: 0,
           width: "100%",
@@ -62,17 +65,23 @@ const Dashboard = () => {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          opacity: 0.87,
           zIndex: -1,
-        },
-      }}
-    >
+        }}
+      />
+
       {/* Sidebar */}
       <Siderbar />
 
-      {/* Main Content */}
-      <Box sx={{ flexGrow: 1, p: 3, mt: 8 }}>
-        {/* AppBar */}
+      {/* Scrollable Content */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          maxHeight: "100vh",
+          p: 3,
+          mt: 8,
+        }}
+      >
         <Appbar />
 
         {/* All Posts */}
