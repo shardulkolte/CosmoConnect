@@ -81,6 +81,7 @@ router.get("/all", async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("user", "username profilePic")
+      .populate("comments.user", "username profilePic") // <-- Add this line
       .sort({ createdAt: -1 });
 
     res.status(200).json(posts);
@@ -101,6 +102,7 @@ router.get("/category/:categoryName", async (req, res) => {
 
     const posts = await Post.find({ category })
       .populate("user", "username profilePic")
+      .populate("comments.user", "username profilePic")
       .sort({ createdAt: -1 });
 
     res.status(200).json(posts);
@@ -156,7 +158,8 @@ router.post("/comment/:id", verifyToken, async (req, res) => {
         }
       },
       { new: true }
-    ).populate("comments.user", "username");
+    ).populate("user", "username profilePic")
+    .populate("comments.user", "username profilePic");
 
     res.json(post);
   } catch (err) {
