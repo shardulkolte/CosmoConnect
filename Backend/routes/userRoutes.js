@@ -38,6 +38,7 @@ router.get("/profile/me", verifyToken, async (req, res) => {
       username: user.username,
       email: user.email,
       profilePic: user.profilePic,
+      bio:user.bio,
       followers: user.followers,
       following: user.following,
     });

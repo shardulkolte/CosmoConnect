@@ -47,8 +47,6 @@
 //       const imageUrl = cloudRes.data.secure_url;
 //       const userId = localStorage.getItem("userId"); // Assuming you saved it
 
-      
-
 //       await axios.post("http://localhost:5000/api/posts/create", {
 //         userId,
 //         image: imageUrl,
@@ -171,17 +169,10 @@
 
 // export default CreatePost;
 
-
 //*************************************************************************************** */
 
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import Siderbar from "../Components/Siderbar";
 import Appbar from "../Components/Appbar";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -295,7 +286,8 @@ const CreatePost = () => {
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               sx={{ mb: 2 }}
-              InputProps={{ style: { color: "#fff" } }}
+              InputProps={{ style: { color: "white" } }}
+              InputLabelProps={{ style: { color: "white" } }}
             />
             <TextField
               label="Category"
@@ -303,7 +295,8 @@ const CreatePost = () => {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               sx={{ mb: 2 }}
-              InputProps={{ style: { color: "#fff" } }}
+              InputProps={{ style: { color: "white" } }}
+              InputLabelProps={{ style: { color: "white" } }}
             />
             <TextField
               label="Hashtags (comma separated)"
@@ -311,7 +304,8 @@ const CreatePost = () => {
               value={hashtags}
               onChange={(e) => setHashtags(e.target.value)}
               sx={{ mb: 2 }}
-              InputProps={{ style: { color: "#fff" } }}
+              InputProps={{ style: { color: "white" } }}
+              InputLabelProps={{ style: { color: "white" } }}
             />
             <Button
               variant="contained"
@@ -320,7 +314,7 @@ const CreatePost = () => {
               startIcon={<CloudUploadIcon />}
               sx={{ mb: 2, backgroundColor: "#1f6feb" }}
             >
-              Upload Image/Video
+              Upload Image
               <input
                 type="file"
                 hidden
