@@ -319,7 +319,7 @@ const Profile = () => {
 
           <Box sx={{ width: "80%", mt: 3 }}>
             {tabValue === 0 && (
-              <Grid container spacing={2} justifyContent="flex-start">
+              <Grid container spacing={7} justifyContent="flex-start" ml={10}>
                 {posts?.length > 0 ? (
                   posts.map((post) => (
                     <Grid item key={post._id} xs={12} sm={6} md={4}>

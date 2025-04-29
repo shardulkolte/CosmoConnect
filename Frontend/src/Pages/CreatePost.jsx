@@ -1,11 +1,6 @@
+
 // import React, { useState } from "react";
-// import {
-//   Box,
-//   Button,
-//   Card,
-//   TextField,
-//   Typography,
-// } from "@mui/material";
+// import { Box, Button, Card, TextField, Typography } from "@mui/material";
 // import Siderbar from "../Components/Siderbar";
 // import Appbar from "../Components/Appbar";
 // import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -40,20 +35,27 @@
 //       formData.append("folder", "cosmoconnect_posts");
 
 //       const cloudRes = await axios.post(
-//         "https://api.cloudinary.com/v1_1/dnggthvva/image/upload", // 👈 Replace with yours
+//         "https://api.cloudinary.com/v1_1/dnggthvva/image/upload",
 //         formData
 //       );
 
 //       const imageUrl = cloudRes.data.secure_url;
-//       const userId = localStorage.getItem("userId"); // Assuming you saved it
+//       const token = localStorage.getItem("token"); // 👈 get token from storage
 
-//       await axios.post("http://localhost:5000/api/posts/create", {
-//         userId,
-//         image: imageUrl,
-//         caption,
-//         category,
-//         hashtags: hashtags.split(",").map((tag) => tag.trim()),
-//       });
+//       await axios.post(
+//         "http://localhost:5000/api/posts/create",
+//         {
+//           image: imageUrl,
+//           caption,
+//           category,
+//           hashtags: hashtags.split(",").map((tag) => tag.trim()),
+//         },
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`, // 👈 pass token in header
+//           },
+//         }
+//       );
 
 //       alert("Post created successfully!");
 //       navigate("/dashboard");
@@ -88,15 +90,9 @@
 //         },
 //       }}
 //     >
-//       {/* Sidebar */}
 //       <Siderbar />
-
-//       {/* Main Content */}
 //       <Box sx={{ flexGrow: 1, p: 3, mt: 8 }}>
-//         {/* AppBar */}
 //         <Appbar />
-
-//         {/* Post Creation Form */}
 //         <Card
 //           sx={{
 //             maxWidth: 600,
@@ -118,7 +114,8 @@
 //               value={caption}
 //               onChange={(e) => setCaption(e.target.value)}
 //               sx={{ mb: 2 }}
-//               InputProps={{ style: { color: "#fff" } }}
+//               InputProps={{ style: { color: "white" } }}
+//               InputLabelProps={{ style: { color: "white" } }}
 //             />
 //             <TextField
 //               label="Category"
@@ -126,7 +123,8 @@
 //               value={category}
 //               onChange={(e) => setCategory(e.target.value)}
 //               sx={{ mb: 2 }}
-//               InputProps={{ style: { color: "#fff" } }}
+//               InputProps={{ style: { color: "white" } }}
+//               InputLabelProps={{ style: { color: "white" } }}
 //             />
 //             <TextField
 //               label="Hashtags (comma separated)"
@@ -134,7 +132,8 @@
 //               value={hashtags}
 //               onChange={(e) => setHashtags(e.target.value)}
 //               sx={{ mb: 2 }}
-//               InputProps={{ style: { color: "#fff" } }}
+//               InputProps={{ style: { color: "white" } }}
+//               InputLabelProps={{ style: { color: "white" } }}
 //             />
 //             <Button
 //               variant="contained"
@@ -143,7 +142,7 @@
 //               startIcon={<CloudUploadIcon />}
 //               sx={{ mb: 2, backgroundColor: "#1f6feb" }}
 //             >
-//               Upload Image/Video
+//               Upload Image
 //               <input
 //                 type="file"
 //                 hidden
@@ -169,10 +168,23 @@
 
 // export default CreatePost;
 
-//*************************************************************************************** */
+
+
+//************************************************************************************************************** */
+
 
 import React, { useState } from "react";
-import { Box, Button, Card, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  TextField,
+  Typography,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import Siderbar from "../Components/Siderbar";
 import Appbar from "../Components/Appbar";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -203,7 +215,7 @@ const CreatePost = () => {
       setUploading(true);
       const formData = new FormData();
       formData.append("file", image);
-      formData.append("upload_preset", "cosmoconnect"); // 👈 Replace with yours
+      formData.append("upload_preset", "cosmoconnect");
       formData.append("folder", "cosmoconnect_posts");
 
       const cloudRes = await axios.post(
@@ -212,7 +224,7 @@ const CreatePost = () => {
       );
 
       const imageUrl = cloudRes.data.secure_url;
-      const token = localStorage.getItem("token"); // 👈 get token from storage
+      const token = localStorage.getItem("token");
 
       await axios.post(
         "http://localhost:5000/api/posts/create",
@@ -224,7 +236,7 @@ const CreatePost = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // 👈 pass token in header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -289,15 +301,31 @@ const CreatePost = () => {
               InputProps={{ style: { color: "white" } }}
               InputLabelProps={{ style: { color: "white" } }}
             />
-            <TextField
-              label="Category"
-              fullWidth
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              sx={{ mb: 2 }}
-              InputProps={{ style: { color: "white" } }}
-              InputLabelProps={{ style: { color: "white" } }}
-            />
+
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel sx={{ color: "white" }}>Category</InputLabel>
+              <Select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                label="Category"
+                sx={{
+                  color: "white",
+                  ".MuiSvgIcon-root ": {
+                    fill: "white !important",
+                  },
+                  ".MuiOutlinedInput-notchedOutline": {
+                    borderColor: "white",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#22c55e",
+                  },
+                }}
+              >
+                <MenuItem value="Science and Space">Science and Space</MenuItem>
+                <MenuItem value="Spiritual Cosmos">Spiritual Cosmos</MenuItem>
+              </Select>
+            </FormControl>
+
             <TextField
               label="Hashtags (comma separated)"
               fullWidth
