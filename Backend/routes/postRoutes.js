@@ -111,4 +111,58 @@ router.get("/category/:categoryName", async (req, res) => {
 });
 
 
+// Like a post
+router.put("/like/:id", verifyToken, async (req, res) => {
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $addToSet: { likes: req.user.id } }, // prevents duplicates
+      { new: true }
+    );
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: "Error liking post" });
+  }
+});
+
+// Unlike a post
+router.put("/unlike/:id", verifyToken, async (req, res) => {
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { likes: req.user.id } },
+      { new: true }
+    );
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: "Error unliking post" });
+  }
+});
+
+// Add a comment
+router.post("/comment/:id", verifyToken, async (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ message: "Comment cannot be empty" });
+
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          comments: {
+            user: req.user.id,
+            text
+          }
+        }
+      },
+      { new: true }
+    ).populate("comments.user", "username");
+
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: "Error adding comment" });
+  }
+});
+
+
 module.exports = router;

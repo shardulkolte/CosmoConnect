@@ -15,21 +15,84 @@ import { useNavigate } from "react-router-dom";
 
 const ScienceAndSpacePosts = () => {
   const [posts, setPosts] = useState([]);
+  const [currentuser, setCurrentUser] = useState(null);
+  const token = localStorage.getItem("token");
+  const [commentText, setCommentText] = useState({});
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:5000/api/posts/category/Science and Space"
-        );
-        setPosts(res.data);
-      } catch (error) {
-        console.error("Failed to load Science and Space posts", error);
-      }
-    };
+  const fetchPosts = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/posts/category/Science and Space"
+      );
+      setPosts(res.data);
+    } catch (error) {
+      console.error("Failed to load Science and Space posts", error);
+    }
+  };
 
+  const fetchCurrentUserProfile = async () => {
+    try {
+      const profileRes = await axios.get(
+        "http://localhost:5000/api/profile/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setCurrentUser(profileRes.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCommentSubmit = async (e, postId) => {
+    e.preventDefault();
+    const text = commentText[postId];
+    if (!text) return;
+
+    try {
+      const res = await axios.post(
+        `http://localhost:5000/api/posts/comment/${postId}`,
+        { text },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => (post._id === postId ? res.data : post))
+      );
+      setCommentText({ ...commentText, [postId]: "" });
+      fetchPosts();
+    } catch (err) {
+      console.error("Failed to add comment", err);
+    }
+  };
+
+  const handleLikeToggle = async (postId, liked) => {
+    try {
+      const url = `http://localhost:5000/api/posts/${
+        liked ? "unlike" : "like"
+      }/${postId}`;
+      const res = await axios.put(
+        url,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) => (post._id === postId ? res.data : post))
+      );
+      fetchPosts();
+    } catch (err) {
+      console.error("Failed to toggle like", err);
+    }
+  };
+
+  useEffect(() => {
     fetchPosts();
+    fetchCurrentUserProfile();
   }, []);
 
   return (
@@ -116,11 +179,66 @@ const ScienceAndSpacePosts = () => {
                   <span key={index}>#{tag} </span>
                 ))}
               </Typography>
-              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                <IconButton sx={{ color: "#1f6feb" }}>
-                  <FavoriteBorder />
-                </IconButton>
-                <Typography variant="body2">0 likes</Typography>
+              {currentuser && (
+                <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                  <IconButton
+                    sx={{
+                      color: post.likes?.includes(currentuser._id)
+                        ? "red"
+                        : "#1f6feb",
+                    }}
+                    onClick={() =>
+                      handleLikeToggle(
+                        post._id,
+                        post.likes?.includes(currentuser._id)
+                      )
+                    }
+                  >
+                    <FavoriteBorder />
+                  </IconButton>
+                  <Typography variant="body2">
+                    {post.likes?.length || 0} likes
+                  </Typography>
+                </Box>
+              )}
+              <Box
+                component="form"
+                onSubmit={(e) => handleCommentSubmit(e, post._id)}
+                sx={{ mt: 2, display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <input
+                  type="text"
+                  placeholder="Add a comment..."
+                  value={commentText[post._id] || ""}
+                  onChange={(e) =>
+                    setCommentText({
+                      ...commentText,
+                      [post._id]: e.target.value,
+                    })
+                  }
+                  style={{
+                    flex: 1,
+                    padding: "8px",
+                    background: "#2b3137",
+                    color: "white",
+                    border: "1px solid #444",
+                    borderRadius: "20px",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor: "#1f6feb",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "20px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Post
+                </button>
               </Box>
             </CardContent>
           </Card>
