@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -11,58 +12,98 @@ import {
   Tab,
   Grid,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
 import Siderbar from "../Components/Siderbar";
 import Appbar from "../Components/Appbar";
+import { toast } from "react-toastify";
 
-const UserProfile = () => {
+const OtherUserProfile = () => {
   const { id } = useParams();
+  const [tabValue, setTabValue] = useState(0);
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [tabValue, setTabValue] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  const handleChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+  const [currentuser, setCurrentUser] = useState(null);
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/profile/user/${id}`
-        );
-        setUser(res.data.user);
-        setPosts(res.data.posts);
+  const token = localStorage.getItem("token");
 
-        // Optional: check if logged-in user is already following this user
-        // You can update this part later if needed
-      } catch (err) {
-        console.error("Failed to fetch user profile:", err);
-      }
-    };
-
-    fetchUserProfile();
-  }, [id]);
-
-  const handleFollow = async () => {
+  const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        "http://localhost:5000/api/profile/follow",
-        { userIdToFollow: id },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await axios.get(
+        `http://localhost:5000/api/profile/user/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-      setIsFollowing(true);
-    } catch (err) {
-      console.error("Failed to follow user", err);
+      setUser(res.data.user);
+      setPosts(res.data.posts);
+      setIsFollowing(res.data.isFollowing);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  if (!user)
+  const fetchCurrentUserProfile = async () => {
+    try {
+      const profileRes = await axios.get(
+        "http://localhost:5000/api/profile/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setCurrentUser(profileRes.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //new handlefollowtoggle
+
+  const handleFollowToggle = async () => {
+    try {
+      if (isFollowing) {
+        await axios.put(
+          `http://localhost:5000/api/profile/unfollow/${id}`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        toast.info("Unfollowed user");
+
+        setIsFollowing(false);
+      } else {
+        await axios.put(
+          `http://localhost:5000/api/profile/follow/${id}`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        toast.success("Followed user");
+
+        setIsFollowing(true);
+      }
+
+      // Refresh user data to update follower counts
+      fetchProfile();
+    } catch (error) {
+      console.error(error);
+      toast.error("Action failed");
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrentUserProfile();
+    fetchProfile();
+  }, [id]);
+
+  if (!user) {
     return (
       <Typography sx={{ mt: 10, textAlign: "center" }}>Loading...</Typography>
     );
+  }
 
   return (
     <Box
@@ -103,7 +144,7 @@ const UserProfile = () => {
         >
           <Box sx={{ mt: 10, textAlign: "center" }}>
             <Avatar
-              src={user?.profilePic || "/images/default-avatar.png"}
+              src={user.profilePic || "/images/default-avatar.png"}
               sx={{
                 width: 120,
                 height: 120,
@@ -112,23 +153,24 @@ const UserProfile = () => {
               }}
             />
             <Typography variant="h4" sx={{ mt: 1, fontWeight: "bold" }}>
-              {user?.username}
+              {user.username}
             </Typography>
             <Typography
               variant="body1"
               sx={{ fontStyle: "italic", color: "gray", mt: 1 }}
             >
-              {user?.bio || "No bio added yet."}
+              {user.bio || "No bio added yet."}
             </Typography>
 
-            <Button
-              variant="contained"
-              sx={{ mt: 2 }}
-              onClick={handleFollow}
-              disabled={isFollowing}
-            >
-              {isFollowing ? "Following" : "Follow"}
-            </Button>
+            {user._id !== currentuser?._id && (
+              <Button
+                variant={isFollowing ? "contained" : "outlined"}
+                onClick={handleFollowToggle}
+                sx={{ mt: 2 }}
+              >
+                {isFollowing ? "Unfollow" : "Follow"}
+              </Button>
+            )}
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
@@ -140,7 +182,6 @@ const UserProfile = () => {
                 Posts
               </Typography>
             </Box>
-            {/* Optional: You can add followers/following counts */}
             <Box sx={{ mx: 4, textAlign: "center" }}>
               <Typography variant="h6" fontWeight="bold">
                 {user?.followers?.length || 0}
@@ -161,7 +202,7 @@ const UserProfile = () => {
 
           <Tabs
             value={tabValue}
-            onChange={handleChange}
+            onChange={(e, newValue) => setTabValue(newValue)}
             textColor="inherit"
             indicatorColor="primary"
             sx={{ mt: 3, color: "#fff", borderBottom: "1px solid #30363d" }}
@@ -214,4 +255,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default OtherUserProfile;

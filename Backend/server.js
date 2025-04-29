@@ -38,7 +38,7 @@ app.use("/api", userRoutes);
 app.use("/api/posts", postRoutes);
 
 // ✅ Protect Route Example
-const authenticateToken = require("./middleware/authMiddleware");
+const {authenticateToken} = require("./middleware/authMiddleware");
 app.get("/api/protected", authenticateToken, (req, res) => {
   res.json({ message: "Welcome to protected route!", user: req.user });
 });

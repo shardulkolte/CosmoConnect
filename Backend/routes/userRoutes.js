@@ -9,6 +9,8 @@ const cloudinary = require("../utils/cloudinary");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+const { authenticateUser } = require('../middleware/authMiddleware');
+
 // Middleware to verify token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -31,7 +33,16 @@ router.get("/profile/me", verifyToken, async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.json(user);
+    res.json({
+      _id: user._id, // <-- ✅ This gives you the current user's ID
+      username: user.username,
+      email: user.email,
+      profilePic: user.profilePic,
+      followers: user.followers,
+      following: user.following,
+    });
+    // 
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -106,21 +117,91 @@ router.put("/profile/update", verifyToken, upload.single('profilePic'), async (r
 
 
 // Fetch any user's profile by ID
-router.get("/profile/user/:id", async (req, res) => {
+router.get("/profile/user/:id", authenticateUser, async (req, res) => {
   try {
     const userId = req.params.id;
+    const currentUserId = req.user.id;
 
-    const user = await User.findById(userId).select("-password"); // hide password
+    const user = await User.findById(userId).select("-password");
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     const posts = await Post.find({ user: userId }).sort({ createdAt: -1 });
 
-    res.json({ user, posts });
+    const isFollowing = user.followers.includes(currentUserId);
+
+    res.json({ user, posts, isFollowing });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Server error" });
   }
 });
+
+
+
+// follow a user
+router.put('/profile/follow/:id', authenticateUser, async (req, res) => {
+  try {
+    const userToFollowId = req.params.id;
+    const currentUserId = req.user.id;
+
+    if (currentUserId === userToFollowId) {
+      return res.status(400).json({ message: "You cannot follow yourself." });
+    }
+
+    const userToFollow = await User.findById(userToFollowId);
+    const currentUser = await User.findById(currentUserId);
+
+    if (!userToFollow || !currentUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    if (!userToFollow.followers.includes(currentUserId)) {
+      userToFollow.followers.push(currentUserId);
+      currentUser.following.push(userToFollowId);
+
+      await userToFollow.save();
+      await currentUser.save();
+
+      return res.status(200).json({ message: "User followed successfully." });
+    } else {
+      return res.status(400).json({ message: "Already following this user." });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error." });
+  }
+});
+
+// unfollow a user
+router.put('/profile/unfollow/:id', authenticateUser, async (req, res) => {
+  try {
+    const userToUnfollowId = req.params.id;
+    const currentUserId = req.user.id;
+
+    const userToUnfollow = await User.findById(userToUnfollowId);
+    const currentUser = await User.findById(currentUserId);
+
+    if (!userToUnfollow || !currentUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    userToUnfollow.followers = userToUnfollow.followers.filter(
+      (id) => id.toString() !== currentUserId
+    );
+    currentUser.following = currentUser.following.filter(
+      (id) => id.toString() !== userToUnfollowId
+    );
+
+    await userToUnfollow.save();
+    await currentUser.save();
+
+    return res.status(200).json({ message: "User unfollowed successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error." });
+  }
+});
+
 
 
 module.exports = router;

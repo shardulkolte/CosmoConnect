@@ -21,6 +21,7 @@ const Login = () => {
         formData
       );
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userId", res.data.user._id);
       // alert(res.data.message);
       navigate("/dashboard");
     } catch (err) {
