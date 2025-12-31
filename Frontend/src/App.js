@@ -10,6 +10,7 @@ import UserProfile from "./Pages/UserProfile";
 import ScienceAndSpacePosts from "./Pages/ScienceSpace";
 import Sprituality from "./Pages/Sprituality";
 import Search from "./Pages/Search";
+import GoogleAuthRedirect from "./Pages/GoogleAuthRedirect";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        {/* <Route path="/google-redirect" element={<GoogleAuthRedirect />} /> */}
+        <Route path="/google-redirect" element={<GoogleAuthRedirect />} />
         <Route path="/createpost" element={<CreatePost />}></Route>
         <Route path="/user/:id" element={<UserProfile />} />
         <Route path="/science&space" element={<ScienceAndSpacePosts />}></Route>
